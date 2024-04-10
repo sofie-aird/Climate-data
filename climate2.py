@@ -76,6 +76,7 @@ def menu_options():
 def menu(data):
     menu_options()
     choice = get_value_between("Select a menu option", 1, 5)
+    binary_lst = data.copy()
     while choice != 5:
         if choice == 1:
             prompt = "Pick a value for n"
@@ -100,11 +101,11 @@ def menu(data):
             display_per(data, n, year)
         elif choice == 4:
             target = input("Enter the name of the country: ")
-            index = find_country(data, target)
+            index = find_country(binary_lst, target)
             if (index == -1):
                 print("Sorry, %s is not in the database" % (target))
             else:
-                print(data[index])
+                print(binary_lst[index])
         menu_options()
         choice = get_value_between("Select a menu option", 1, 5)
 
@@ -112,7 +113,7 @@ def menu(data):
 def get_value_between(message, low, high):
     print(message)
     choice = int(input("Enter a value between %d and %d: " % (low, high)))
-    while (choice >= high or choice < low):
+    while (choice > high or choice < low):
         if choice == 5:
             print("bye bye")
             return choice
@@ -152,7 +153,7 @@ def find_largest(ls, start, stop, year, choice):
     for i in range(start+1, stop):
         if ls[i].getCO2(year) > max: # if element is smaller than min...
             max = ls[i].getCO2(year)   # update the min value seen so far
-            idx = i       # also update the index of the smallest value
+            idx = i    # also update the index of the smallest value
     return idx
   elif choice == 2:
     max = ls[start].getGDP(year) # assume first element is smallest
@@ -187,28 +188,48 @@ def swap(ls, i, j):
    ls[j] = tmp
 
 def display_emissions(data, n, year):
+    missing = []
     print(" %d      Emissions in Mt          Country" % (year))
     print("-------------------------------------------------------")
     for i in range(n):
-        print("%-5d %-20.6f %-30s" % (i+1, data[i].getCO2(year), data[i].getName()))
+        if data[i].getCO2(year) == -1:
+            missing.append(data[i])
+        else:
+            print("%-5d %-20.6f %-30s" % (i+1, data[i].getCO2(year), data[i].getName()))
+    if len(missing) > 0:
+        print("There are %d missing values" % (len(missing)))
     print()
 
 def display_gdp(data, n, year):
+    missing = []
     print("%d      CO2(Mt)           GDP(B)        Country" % (year))
     print("------------------------------------------------------------")
     for i in range(n):
-        print("%-5d %-20.6f %-20.6f %-30s" % (i+1, data[i].getCO2(year), \
+        if data[i].getGDP(year) == -1:
+            missing.append(data[i])
+        else:
+            print("%-5d %-20.6f %-20.6f %-30s" % (i+1, data[i].getCO2(year), \
         data[i].getGDP(year), data[i].getName()))
+    if len(missing) > 0:
+        print("There are %d missing values" % (len(missing)))
+    print()
 
 def display_per(data, n, year):
+    missing = []
     print("%d   C02(Mt)/M people     CO2(Mt)       Population(M)    Country"\
     % (year))
     print("--------------------------------------------------------------\
     --------")
     for i in range(n):
-        print("%-5d %-20.6f %-20.6f %-20.6f %-30s" % (i+1, \
-        data[i].getCO2(year)/data[i].getPopulation(year), data[i].getCO2(year),\
-        data[i].getPopulation(year), data[i].getName()))
+        if data[i].getCO2(year) == -1 or data[i].getGDP(year) == -1:
+            missing.append(data[i])
+        else:
+            print("%-5d %-20.6f %-20.6f %-20.6f %-30s" % (i+1, \
+            data[i].getCO2(year)/data[i].getPopulation(year), data[i].getCO2(year),\
+            data[i].getPopulation(year), data[i].getName()))
+    if len(missing) > 0:
+        print("There are %d missing values" % (len(missing)))
+    print()
 
 def find_country(countries, target):
     low = 0
