@@ -1,13 +1,13 @@
 """
-TODO: add a top-level comment
+This program reads in climate data on every country in the world,
+and prompts the user to choose how to sort the countries according
+to their statistics, and displays the results neatly.
 
-climate2.py
+Sofie Aird
 """
 
 from cs21_country import *
 
-# you can import some of our lab8 solution functions to use like this:
-# from cs21S24_lab08lib import binary_search
 
 def main():
 
